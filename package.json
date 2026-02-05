@@ -1,0 +1,64 @@
+{
+  "name": "superagent-lite",
+  "version": "1.0.0",
+  "description": "Lightweight drop-in replacement for superagent built on native fetch",
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsx src/index.ts",
+    "prepublishOnly": "npm run build",
+    "clean": "rm -rf dist"
+  },
+  "keywords": [
+    "superagent",
+    "http",
+    "https",
+    "request",
+    "client",
+    "api",
+    "rest",
+    "ajax",
+    "fetch",
+    "lightweight",
+    "drop-in",
+    "replacement",
+    "typescript"
+  ],
+  "author": "",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/willzhangfly/superagent-lite.git"
+  },
+  "bugs": {
+    "url": "https://github.com/willzhangfly/superagent-lite/issues"
+  },
+  "homepage": "https://github.com/willzhangfly/superagent-lite#readme",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "funding": {
+    "type": "buymeacoffee",
+    "url": "https://buymeacoffee.com/willzhangfly"
+  },
+  "devDependencies": {
+    "typescript": "^5.3.0",
+    "@types/node": "^20.11.0",
+    "tsx": "^4.7.0"
+  },
+  "sideEffects": false
+}
