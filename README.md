@@ -16,6 +16,8 @@ Takes the best from **superagent**, **axios**, **got**, and **ky** while fixing 
 | Hooks/Interceptors | ❌ | ✅ | ✅ | ✅ | **✅** |
 | Instance creation | ❌ | ✅ | ✅ | ✅ | **✅** |
 | Smart retry | ❌ | ❌ | ✅ | ✅ | **✅** |
+| Response shortcuts | ❌ | ❌ | ❌ | ✅ | **✅** |
+| File uploads | ✅ | ✅ | ✅ | ❌ | **✅** |
 
 ## Installation
 
@@ -43,6 +45,10 @@ await request
   .query({ page: 1, limit: 10 })
   .set('Authorization', 'Bearer token')
   .accept('json');
+
+// Response shortcuts (ky-style)
+const data = await request.get('/api/users').json();
+const html = await request.get('/page').text();
 ```
 
 ## Superagent Drop-in Replacement
@@ -91,8 +97,35 @@ request.options(url)
 .retry({ limit, methods, statusCodes, delay })
 .auth(user, pass)         // Basic auth
 .auth(token, { type: 'bearer' })  // Bearer token
+.withCredentials()        // Include cookies (CORS)
+.redirects(false)         // Disable redirects
 .hook(name, fn)           // Add hook
 .abort()                  // Abort request
+```
+
+### File Uploads
+
+```typescript
+// Upload files with multipart/form-data
+await request
+  .post('/upload')
+  .attach('avatar', file, 'photo.jpg')
+  .field('name', 'John')
+  .field({ email: 'john@example.com' });
+```
+
+### Response Shortcuts (ky-style)
+
+```typescript
+// Get parsed JSON directly
+const users = await request.get('/api/users').json<User[]>();
+
+// Get text response
+const html = await request.get('/page').text();
+
+// Get binary data
+const buffer = await request.get('/image.png').arrayBuffer();
+const blob = await request.get('/file.pdf').blob();
 ```
 
 ### Response Object
@@ -123,6 +156,29 @@ const api = request.create({
 // All requests use the base configuration
 await api.get('/users');
 await api.post('/users').send({ name: 'John' });
+
+// Extend instance (ky-style)
+const adminApi = api.extend({
+  headers: { 'X-Admin': 'true' }
+});
+```
+
+### Instance Options
+
+```typescript
+request.create({
+  baseURL: 'https://api.example.com',  // Base URL for requests
+  prefixUrl: 'https://api.example.com', // ky-style alias
+  headers: { ... },                     // Default headers
+  timeout: 5000,                        // Request timeout
+  retry: 2,                             // Retry count
+  credentials: 'include',               // Fetch credentials mode
+  redirect: 'follow',                   // Redirect behavior
+  throwHttpErrors: true,                // Throw on non-2xx
+  parseJson: JSON.parse,                // Custom JSON parser
+  stringifyJson: JSON.stringify,        // Custom JSON serializer
+  fetch: customFetch                    // Custom fetch implementation
+});
 ```
 
 ## Hooks (got/ky-style)
@@ -191,8 +247,9 @@ import request, {
   HTTPError,
   TimeoutError,
   RequestOptions,
+  InstanceOptions,
   Hooks,
-  InstanceOptions
+  RequestInstance
 } from 'superagent-lite';
 ```
 
@@ -208,6 +265,21 @@ request.put(url).auth(user, pass).send(data).then(...)
 
 // ✅ Also works - legacy callback style
 request.get(url).end((err, res) => { ... });
+
+// ✅ File uploads
+request.post(url).attach('file', buffer, 'name.txt').field('key', 'value')
+```
+
+## Project Structure
+
+```
+src/
+├── index.ts      # Main exports
+├── types.ts      # TypeScript interfaces
+├── request.ts    # Request class with chaining API
+├── response.ts   # Response wrapper class
+├── instance.ts   # Instance factory
+└── errors.ts     # HTTPError, TimeoutError
 ```
 
 ## License

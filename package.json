@@ -1,6 +1,6 @@
 {
   "name": "superagent-lite",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Lightweight drop-in replacement for superagent built on native fetch",
   "type": "module",
   "main": "./dist/index.js",
